@@ -1015,14 +1015,12 @@ class AsyncMobileAPI(AsyncBaseAPI):
             }
         )
 
-    async def refresh_token(self, token: Optional[str] = None, client_id: Optional[str] = None, client_secret: Optional[str] = None) -> str:
+    async def refresh_token(self, token: Optional[str] = None) -> str:
         """
         Refreshes the token and returns the refreshed token as a string.
 
         Args:
             token (str, optional): The token to refresh. Defaults to None.
-            client_id (str, optional): The client id. Defaults to None.
-            client_secret (str, optional): The client secret. Defaults to None.
 
         Returns:
             str: The refreshed token.
@@ -1035,37 +1033,16 @@ class AsyncMobileAPI(AsyncBaseAPI):
                 return_raw_text=True
             )
         else:
-            access_token_resp = await self.request(
-                method="POST",
-                base_url=BaseURL(type=URLTypes.AUTH, system=self.system),
-                path="/sps/oauth/te",
-                params={
-                    "refresh_token": token or getattr(self, "token_for_refresh", ""),
-                    "grant_type": "refresh_token"
-                },
+            token = await self.request(
+                method="GET",
+                base_url=BaseURL(type=URLTypes.SCHOOL, system=self.system),
+                path="/v2/token/refresh",
                 custom_headers={
-                    "Authorization": "Basic " + base64.b64encode(f"{client_id or getattr(self, 'client_id', '')}:{client_secret or getattr(self, 'client_secret', '')}".encode()).decode()
+                    "cookie": f'aupd_token={token}'
                 },
-                required_token=False,
-                return_json=True
+                return_raw_text=True
             )
-            self.token_for_refresh = access_token_resp["refresh_token"]
-            access_token = access_token_resp["access_token"]
-            token = (
-                await self.request(
-                    method="POST",
-                    base_url=BaseURL(type=URLTypes.SCHOOL, system=self.system),
-                    path="/v3/auth/sudir/auth",
-                    json={
-                        "user_authentication_for_mobile_request": {
-                            "mos_access_token": access_token
-                        }
-                    },
-                    return_json=True,
-                    required_token=False
-                )
-            )["user_authentication_for_mobile_response"]["mesh_access_token"]
-
+            
         self.token = token
         return token
 
@@ -1564,14 +1541,12 @@ class AsyncWebAPI(AsyncBaseAPI):
             model=web.UserInfo
         )
 
-    async def refresh_token(self, token: Optional[str] = None, client_id: Optional[str] = None, client_secret: Optional[str] = None) -> str:
+    async def refresh_token(self, token: Optional[str] = None) -> str:
         """
         Refreshes the token and returns the refreshed token as a string.
 
         Args:
             token (str, optional): The token to refresh. Defaults to None.
-            client_id (str, optional): The client id. Defaults to None.
-            client_secret (str, optional): The client secret. Defaults to None.
 
         Returns:
             str: The refreshed token.
@@ -1584,36 +1559,15 @@ class AsyncWebAPI(AsyncBaseAPI):
                 return_raw_text=True
             )
         else:
-            access_token_resp = await self.request(
-                method="POST",
-                base_url=BaseURL(type=URLTypes.AUTH, system=self.system),
-                path="/sps/oauth/te",
-                params={
-                    "refresh_token": token or getattr(self, "token_for_refresh", ""),
-                    "grant_type": "refresh_token"
-                },
+            token = await self.request(
+                method="GET",
+                base_url=BaseURL(type=URLTypes.SCHOOL, system=self.system),
+                path="/v2/token/refresh",
                 custom_headers={
-                    "Authorization": "Basic " + base64.b64encode(f"{client_id or getattr(self, 'client_id', '')}:{client_secret or getattr(self, 'client_secret', '')}".encode()).decode()
+                    "cookie": f'aupd_token={token}'
                 },
-                required_token=False,
-                return_json=True
+                return_raw_text=True
             )
-            self.token_for_refresh = access_token_resp["refresh_token"]
-            access_token = access_token_resp["access_token"]
-            token = (
-                await self.request(
-                    method="POST",
-                    base_url=BaseURL(type=URLTypes.SCHOOL, system=self.system),
-                    path="/v3/auth/sudir/auth",
-                    json={
-                        "user_authentication_for_mobile_request": {
-                            "mos_access_token": access_token
-                        }
-                    },
-                    return_json=True,
-                    required_token=False
-                )
-            )["user_authentication_for_mobile_response"]["mesh_access_token"]
 
         self.token = token
         return token
