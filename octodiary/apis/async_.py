@@ -9,7 +9,7 @@ import random
 import re
 import string
 from datetime import date
-from typing import Optional, TypeVar, Union
+from typing import Optional, Union
 
 from aiohttp import ClientResponse, ClientSession
 from aiohttp.cookiejar import CookieJar
@@ -46,11 +46,8 @@ from octodiary.types.mobile import (
     Visits,
 )
 from octodiary.types.mobile.subject_marks import SubjectsMarks
-from octodiary.types.model import Type
 from octodiary.types.web import SessionUserInfo
 from octodiary.urls import BaseURL, Systems, URLTypes
-
-T = TypeVar("T", bound=Type)
 
 
 class AsyncMobileAPI(AsyncBaseAPI):
@@ -109,7 +106,7 @@ class AsyncMobileAPI(AsyncBaseAPI):
                     BaseURL(type=URLTypes.AUTH, system=Systems.MES) + "/sps/oauth/register",
                     headers={"Authorization": "Bearer FqzGn1dTJ9BQCHgV0rmMjtYFIgaFf9TrGVEzgtju-zbtIbeJSkIyDcl0e2QMirTNpEqovTT8NvOLZI0XklVEIw"},
                     json={
-                        "software_id": "dnevnik.mos.ru",
+                        "software_id": "ms-edu.tatar.ru",
                         "device_type": "android_phone",
                         "software_statement": "eyJ0eXAiOiJKV1QiLCJibGl0ejpraW5kIjoiU09GVF9TVE0iLCJhbGciOiJSUzI1NiJ9.eyJncmFudF90eXBlcyI6WyJhdXRob3JpemF0aW9uX2NvZGUiLCJwYXNzd29yZCIsImNsaWVudF9jcmVkZW50aWFscyIsInJlZnJlc2hfdG9rZW4iXSwic2NvcGUiOiJiaXJ0aGRheSBibGl0el9jaGFuZ2VfcGFzc3dvcmQgYmxpdHpfYXBpX3VzZWNfY2hnIGJsaXR6X3VzZXJfcmlnaHRzIGNvbnRhY3RzIG9wZW5pZCBwcm9maWxlIGJsaXR6X3JtX3JpZ2h0cyBibGl0el9hcGlfc3lzX3VzZXJfY2hnIGJsaXR6X2FwaV9zeXNfdXNlcnMgYmxpdHpfYXBpX3N5c191c2Vyc19jaGcgc25pbHMgYmxpdHpfYXBpX3N5c191c2VjX2NoZyBibGl0el9xcl9hdXRoIiwianRpIjoiYTVlM2NiMGQtYTBmYi00ZjI1LTk3ODctZTllYzRjOTFjM2ZkIiwic29mdHdhcmVfaWQiOiJkbmV2bmlrLm1vcy5ydSIsInNvZnR3YXJlX3ZlcnNpb24iOiIxIiwicmVzcG9uc2VfdHlwZXMiOlsiY29kZSIsInRva2VuIl0sImlhdCI6MTYzNjcyMzQzOSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5tb3MucnUiLCJyZWRpcmVjdF91cmlzIjpbImh0dHA6Ly9sb2NhbGhvc3QiLCJzaGVsbDovL2F1dGhwb3J0YWwiLCJkbmV2bmlrLW1lczovL29hdXRoMnJlZGlyZWN0IiwiaHR0cHM6Ly9zY2hvb2wubW9zLnJ1L2F1dGgvbWFpbi9jYWxsYmFjayIsImh0dHBzOi8vc2Nob29sLm1vcy5ydS92MS9vYXV0aC9jYWxsYmFjayIsImh0dHBzOi8vZG5ldm5pay5tb3MucnUvc3VkaXIiLCJodHRwczovL3NjaG9vbC5tb3MucnUvYXV0aC9jYWxsYmFjayIsImh0dHA6Ly9kbmV2bmlrLm1vcy5ydS9zdWRpciJdLCJhdWQiOlsiZG5ldm5pay5tb3MucnUiXX0.EERWGw5RGhLQ1vBiGrdG_eJrCyJEyan-H4UWT1gr4B9ZfP58pyJoVw5wTt8YFqzwbvHNQBnvrYfMCzOkHpsU7TxlETJpbWcWbnV5JI-inzXGyKCic2fAVauVCjos3v6AFiP6Uw6ZXIC6b9kQ5WgRVM66B9UwAB2MKTThTohJP7_MNZJ0RiOd8RLlvF4C7yfuqoGU2-KWLwr78ATniTvYFWszl8jAi_SiD9Ai1GWW4mO9-JQ01f4N9umC5Cy2tYiZhxbaz2rOsAQBBjY6rbCCJbCpb1lyGfs2qhhAB-ODGTq7W7r1WBlAm5EXlPpuW_9pi8uxdxiqjkG3d6xy7h7gtQ"
                     }
@@ -155,11 +152,10 @@ class AsyncMobileAPI(AsyncBaseAPI):
                     "login": username,
                     "password": password,
                     "proofOfWork": proof_of_work
-                },
-                allow_redirects=False,
+                }
             )
 
-            return await self._handle_login_response(resp, await resp.json() if "{" in await resp.text() else {})
+            return await self._handle_login_response(resp, await resp.json())
 
     async def handle_action(self, response: ClientResponse, action: Optional[str] = None, failed: Optional[str] = None) -> str | bool:
         match failed or action:
@@ -310,10 +306,6 @@ class AsyncMobileAPI(AsyncBaseAPI):
             return self.token
         elif response.status == 200 and (token := response.cookies.get("aupd_token")):
             return token.value
-        elif "Location" in response.headers and (location := response.headers.get("Location")) and "?code=" in location:
-            return await self._handle_login_response(response, {
-                "trust_code": location.split("?code=")[1]
-            })
 
         return None
 
@@ -443,9 +435,8 @@ class AsyncMobileAPI(AsyncBaseAPI):
             self,
             profile_id: int,
             name: str = "settings_group_v1",
-            subsystem_id: int = 1,
-            settings_model: type[T] = UserSettings
-    ) -> T:
+            subsystem_id: int = 1
+    ) -> UserSettings:
         """
         Get user settings
 
@@ -453,10 +444,9 @@ class AsyncMobileAPI(AsyncBaseAPI):
             profile_id (int): The ID of the profile.
             name (str, optional): The name of the settings group. Defaults to "settings_group_v1".
             subsystem_id (int, optional): The ID of the subsystem. Defaults to 1.
-            settings_model (type[T], optional): The settings model. Defaults to UserSettings.
 
         Returns:
-            T (Type model) or UserSettings: The user settings object.
+            UserSettings: The user settings object.
 
         Raises:
             None.
@@ -474,12 +464,12 @@ class AsyncMobileAPI(AsyncBaseAPI):
                 "client-type": "diary-mobile",
                 "profile-id": profile_id
             },
-            model=settings_model
+            model=UserSettings,
         )
 
     async def edit_user_settings_app(
             self,
-            settings: Type,
+            settings: UserSettings,
             profile_id: int,
             name: str = "settings_group_v1",
             subsystem_id: int = 1,
@@ -488,14 +478,14 @@ class AsyncMobileAPI(AsyncBaseAPI):
         Edit user settings
 
         Args:
-            settings (TypeModel or UserSettings): The user settings object.
+            settings (UserSettings): The user settings object.
             profile_id (int): The ID of the profile.
             name (str, optional): The name of the settings group. Defaults to "settings_group_v1".
             subsystem_id (int, optional): The ID of the subsystem. Defaults to 1.
         """
         await self.request(
             method="PUT",
-            base_url=BaseURL(type=URLTypes.DNEVNIK if self.system == Systems.MYSCHOOL else URLTypes.SCHOOL, system=self.system),
+            base_url=BaseURL(type=URLTypes.DNEVNIK, system=self.system),
             path="/api/usersettings/v1",
             params={
                 "name": name,
@@ -746,7 +736,7 @@ class AsyncMobileAPI(AsyncBaseAPI):
             base_url=BaseURL(type=URLTypes.SCHOOL_API, system=self.system),
             path=f"/family/mobile/v1/programs/parallel_curriculum/{id}",
             model=ParallelCurriculum,
-            is_list=False,
+            is_list=True,
             params={
                 "student_id": student_id,
             },
@@ -1300,7 +1290,7 @@ class AsyncWebAPI(AsyncBaseAPI):
                     BaseURL(type=URLTypes.AUTH, system=Systems.MES) + "/sps/oauth/register",
                     headers={"Authorization": "Bearer FqzGn1dTJ9BQCHgV0rmMjtYFIgaFf9TrGVEzgtju-zbtIbeJSkIyDcl0e2QMirTNpEqovTT8NvOLZI0XklVEIw"},
                     json={
-                        "software_id": "dnevnik.mos.ru",
+                        "software_id": "ms-edu.tatar.ru",
                         "device_type": "android_phone",
                         "software_statement": "eyJ0eXAiOiJKV1QiLCJibGl0ejpraW5kIjoiU09GVF9TVE0iLCJhbGciOiJSUzI1NiJ9.eyJncmFudF90eXBlcyI6WyJhdXRob3JpemF0aW9uX2NvZGUiLCJwYXNzd29yZCIsImNsaWVudF9jcmVkZW50aWFscyIsInJlZnJlc2hfdG9rZW4iXSwic2NvcGUiOiJiaXJ0aGRheSBibGl0el9jaGFuZ2VfcGFzc3dvcmQgYmxpdHpfYXBpX3VzZWNfY2hnIGJsaXR6X3VzZXJfcmlnaHRzIGNvbnRhY3RzIG9wZW5pZCBwcm9maWxlIGJsaXR6X3JtX3JpZ2h0cyBibGl0el9hcGlfc3lzX3VzZXJfY2hnIGJsaXR6X2FwaV9zeXNfdXNlcnMgYmxpdHpfYXBpX3N5c191c2Vyc19jaGcgc25pbHMgYmxpdHpfYXBpX3N5c191c2VjX2NoZyBibGl0el9xcl9hdXRoIiwianRpIjoiYTVlM2NiMGQtYTBmYi00ZjI1LTk3ODctZTllYzRjOTFjM2ZkIiwic29mdHdhcmVfaWQiOiJkbmV2bmlrLm1vcy5ydSIsInNvZnR3YXJlX3ZlcnNpb24iOiIxIiwicmVzcG9uc2VfdHlwZXMiOlsiY29kZSIsInRva2VuIl0sImlhdCI6MTYzNjcyMzQzOSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5tb3MucnUiLCJyZWRpcmVjdF91cmlzIjpbImh0dHA6Ly9sb2NhbGhvc3QiLCJzaGVsbDovL2F1dGhwb3J0YWwiLCJkbmV2bmlrLW1lczovL29hdXRoMnJlZGlyZWN0IiwiaHR0cHM6Ly9zY2hvb2wubW9zLnJ1L2F1dGgvbWFpbi9jYWxsYmFjayIsImh0dHBzOi8vc2Nob29sLm1vcy5ydS92MS9vYXV0aC9jYWxsYmFjayIsImh0dHBzOi8vZG5ldm5pay5tb3MucnUvc3VkaXIiLCJodHRwczovL3NjaG9vbC5tb3MucnUvYXV0aC9jYWxsYmFjayIsImh0dHA6Ly9kbmV2bmlrLm1vcy5ydS9zdWRpciJdLCJhdWQiOlsiZG5ldm5pay5tb3MucnUiXX0.EERWGw5RGhLQ1vBiGrdG_eJrCyJEyan-H4UWT1gr4B9ZfP58pyJoVw5wTt8YFqzwbvHNQBnvrYfMCzOkHpsU7TxlETJpbWcWbnV5JI-inzXGyKCic2fAVauVCjos3v6AFiP6Uw6ZXIC6b9kQ5WgRVM66B9UwAB2MKTThTohJP7_MNZJ0RiOd8RLlvF4C7yfuqoGU2-KWLwr78ATniTvYFWszl8jAi_SiD9Ai1GWW4mO9-JQ01f4N9umC5Cy2tYiZhxbaz2rOsAQBBjY6rbCCJbCpb1lyGfs2qhhAB-ODGTq7W7r1WBlAm5EXlPpuW_9pi8uxdxiqjkG3d6xy7h7gtQ"
                     }
@@ -1617,40 +1607,6 @@ class AsyncWebAPI(AsyncBaseAPI):
 
         self.token = token
         return token
-
-    async def get_system_messages(
-            self,
-            published: bool = True,
-            today: bool = True,
-            profile_id: Optional[int] = None,
-            profile_type: Optional[str] = None,
-            pid: Optional[int] = None
-    ) -> list:
-        """
-        Get system messages
-
-        Args:
-            published: bool
-            today: bool
-            profile_id: int
-            profile_type: str
-            pid: int
-
-        Returns:
-            List: List of system messages
-        """
-        return await self.request(
-            method="GET",
-            base_url=BaseURL(type=URLTypes.SCHOOL if self.system == Systems.MYSCHOOL else URLTypes.DNEVNIK, system=self.system),
-            path="/acl/api/system_messages",
-            custom_headers={
-                "Accept": "application/json",
-                "Profile-Id": profile_id,
-                "Profile-Type": profile_type,
-            },
-            params={"pid": pid, "published": published, "today": today},
-            return_json=True
-        )
 
     async def get_session_info(self) -> web.SessionUserInfo:
         """

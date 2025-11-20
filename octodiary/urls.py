@@ -26,9 +26,9 @@ class BaseURLs:
 
     class MYSCHOOL:
         AUTH = "https://esia.gosuslugi.ru"
-        SCHOOL = "https://myschool.mosreg.ru"
-        SCHOOL_API = "https://api.myschool.mosreg.ru"
-        DNEVNIK = "https://authedu.mosreg.ru"
+        SCHOOL = "https://ms-edu.tatar.ru"
+        SCHOOL_API = "https://ms-edu.tatar.ru/api"
+        DNEVNIK = "https://ms-edu.tatar.ru"
 
 
     class MES:
@@ -42,62 +42,61 @@ def BaseURL(type: str, system: str) -> str:  # noqa: N802
     return getattr(getattr(BaseURLs, system.upper(), None), type.upper(), None)
 
 
-# class MySchoolURLs:
-#     """URLs for methods in system "Моя Школа" """
+class MySchoolURLs:
+     """URLs for methods in system "Моя Школа" """
 
-#     API_SESSIONS = "https://authedu.mosreg.ru/lms/api/sessions"
-#     PROFILE_INFO = "https://myschool.mosreg.ru/acl/api/users/profile_info"
-#     USER_SETTINGS = "https://authedu.mosreg.ru/api/usersettings/v1"
-#     EVENTS = "https://authedu.mosreg.ru/api/eventcalendar/v1/api/events"
-#     CHILDRENS = "https://authedu.mosreg.ru/v1/user/childrens"
-#     RATING_RANK_CLASS = "https://authedu.mosreg.ru/api/ej/rating/v1/rank/class"
-#     RATING_RANK_SHORT = "https://authedu.mosreg.ru/api/ej/rating/v1/rank/rankShort"
-#     RATING_RANK_SUBJECTS = "https://authedu.mosreg.ru/api/ej/rating/v1/rank/subjects"
-#     USER_INFO = "https://authedu.mosreg.ru/v3/userinfo"
-#     REFRESH_TOKEN = "https://authedu.mosreg.ru/v2/token/refresh"
-#     SYSTEM_MESSAGES = "https://myschool.mosreg.ru/acl/api/system_messages"
-#     API_SESSIONS2 = "https://myschool.mosreg.ru/lms/api/sessions"
-#     ACADEMIC_YEARS = "https://myschool.mosreg.ru/core/api/academic_years"
-#     USER = "https://myschool.mosreg.ru/acl/api/users"
-#     STUDENT_PROFILES = "https://myschool.mosreg.ru/core/api/student_profiles"
-#     PERSON_DATA = "https://authedu.mosreg.ru/api/persondata/v1/persons/{person_id}"
-#     USER_CONTACTS = "https://authedu.mosreg.ru/v1/user/contacts"
-#     ROLES = "https://authedu.mosreg.ru/v1/roles/allGlobal/"
-#     ORGANIZATIONS = "https://authedu.mosreg.ru/v1/nsi/organisations"
-
-
-#     class LOGIN:
-#         """URLs for login process"""
-
-#         AUTH_CALLBACK = "https://authedu.mosreg.ru/v3/auth/kauth/callback"
-#         FILL_MFA = "https://esia.gosuslugi.ru/aas/oauth2/api/login/promo-mfa/fill-mfa?decision=false"
-#         ALLOW_SCOPE = "https://esia.gosuslugi.ru/aas/oauth2/api/scope/allow"
-#         AUTHEDU_ESIA_LOGIN = "https://authedu.mosreg.ru/v3/auth/esia/login"
-#         GOSUSLUGI_OAUTH2_CONFIG = "https://esia.gosuslugi.ru/aas/oauth2/config"
-#         GOSUSLUGI_API_LOGIN = "https://esia.gosuslugi.ru/aas/oauth2/api/login"
-#         ENTER_MFA = "https://esia.gosuslugi.ru/aas/oauth2/api/login/{METHOD}/verify?code={CODE}"
+     API_SESSIONS = "https://ms-edu.tatar.ru/api/ej/acl/v1/sessions"
+     PROFILE_INFO = "https://ms-edu.tatar.ru/acl/api/users/profile_info"
+     USER_SETTINGS = "https://ms-edu.tatar.ru/api/usersettings/v1"
+     EVENTS = "https://ms-edu.tatar.ru/api/eventcalendar/v1/api/events"
+     CHILDRENS = "https://ms-edu.tatar.ru/v1/user/childrens"
+     RATING_RANK_CLASS = "https://ms-edu.tatar.ru/api/ej/rating/v1/rank/class"
+     RATING_RANK_SHORT = "https://ms-edu.tatar.ru/api/ej/rating/v1/rank/rankShort"
+     RATING_RANK_SUBJECTS = "https://ms-edu.tatar.ru/api/ej/rating/v1/rank/subjects"
+     USER_INFO = "https://ms-edu.tatar.ru/v1/oauth/userinfo"
+     REFRESH_TOKEN = "https://ms-edu.tatar.ru/v2/token/refresh"
+     API_SESSIONS2 = "https://ms-edu.tatar.ru/lms/api/sessions"
+     ACADEMIC_YEARS = "https://ms-edu.tatar.ru/api/ej/core/family/v1/academic_years"
+     USER = "https://ms-edu.tatar.ru/api/ej/acl/users"
+     STUDENT_PROFILES = "https://ms-edu.tatar.ru/core/api/student_profiles"
+     PERSON_DATA = "https://ms-edu.tatar.ru/api/persondata/v1/persons/{person_id}"
+     USER_CONTACTS = "https://ms-edu.tatar.ru/v1/user/contacts"
+     ROLES = "https://ms-edu.tatar.ru/v1/roles/allGlobal/"
+     ORGANIZATIONS = "https://ms-edu.tatar.ru/v1/nsi/organisations"
 
 
-#     class MOBILE:
-#         """Mobile API urls"""
+     class LOGIN:
+         """URLs for login process"""
 
-#         FAMILY_PROFILE = "https://api.myschool.mosreg.ru/family/mobile/v1/profile"
-#         HOMEWORKS_SHORT = "https://api.myschool.mosreg.ru/family/mobile/v1/homeworks/short"
-#         MARKS = "https://api.myschool.mosreg.ru/family/mobile/v1/marks"
-#         PERIODS_SCHEDULES = "https://api.myschool.mosreg.ru/family/mobile/v1/periods_schedules"
-#         SUBJECT_MARKS_SHORT = "https://api.myschool.mosreg.ru/family/mobile/v1/subject_marks/short"
-#         SUBJECTS_LIST = "https://api.myschool.mosreg.ru/family/mobile/v1/subjects/list"
-#         PROGRAMS_PARALLEL_CURRICULUM = "https://api.myschool.mosreg.ru/family/mobile/v1/programs/parallel_curriculum/{ID}"
-#         PERSON_DATA = "https://myschool.mosreg.ru/api/persondata/mobile/persons/{person_id}"
-#         NOTIFICATIONS = "https://api.myschool.mosreg.ru/family/mobile/v1/notifications/search"
-#         SUBJECT_MARKS = "https://api.myschool.mosreg.ru/family/mobile/v1/subject_marks/for_subject"
-#         LESSON_SCHEDULE_ITEMS = "https://api.myschool.mosreg.ru/family/mobile/v1/lesson_schedule_items/{lesson_id}"
+         AUTH_CALLBACK = "https://ms-edu.tatar.ru/v3/auth/kauth/callback"
+         FILL_MFA = "https://esia.gosuslugi.ru/aas/oauth2/api/login/promo-mfa/fill-mfa?decision=false"
+         ALLOW_SCOPE = "https://esia.gosuslugi.ru/aas/oauth2/api/scope/allow"
+         AUTHEDU_ESIA_LOGIN = "https://ms-edu.tatar.ru/v3/auth/esia/login"
+         GOSUSLUGI_OAUTH2_CONFIG = "https://esia.gosuslugi.ru/aas/oauth2/config"
+         GOSUSLUGI_API_LOGIN = "https://esia.gosuslugi.ru/aas/oauth2/api/login"
+         ENTER_MFA = "https://esia.gosuslugi.ru/aas/oauth2/api/login/{METHOD}/verify?code={CODE}"
 
 
-#     class WEB:
-#         """Web API urls"""
+     class MOBILE:
+         """Mobile API urls"""
 
-#         FAMILY_PROFILE = "https://authedu.mosreg.ru/api/family/web/v1/profile"
+         FAMILY_PROFILE = "https://ms-edu.tatar.ru/api/family/mobile/v1/profile"
+         HOMEWORKS_SHORT = "https://ms-edu.tatar.ru/api/family/mobile/v1/homeworks/short"
+         MARKS = "https://ms-edu.tatar.ru/api/family/web/v1/marks"
+         PERIODS_SCHEDULES = "https://ms-edu.tatar.ru/api/family/mobile/v1/periods_schedules"
+         SUBJECT_MARKS_SHORT = "https://ms-edu.tatar.ru/api/family/mobile/v1/subject_marks/short"
+         SUBJECTS_LIST = "https://ms-edu.tatar.ru/api/family/mobile/v1/subjects/list"
+         PROGRAMS_PARALLEL_CURRICULUM = "https://ms-edu.tatar.ru/api/family/mobile/v1/programs/parallel_curriculum/{ID}"
+         PERSON_DATA = "https://ms-edu.tatar.ru/api/persondata/mobile/persons/{person_id}"
+         NOTIFICATIONS = "https://ms-edu.tatar.ru/api/family/mobile/v1/notifications/search"
+         SUBJECT_MARKS = "https://ms-edu.tatar.ru/api/family/mobile/v1/subject_marks/for_subject"
+         LESSON_SCHEDULE_ITEMS = "https://ms-edu.tatar.ru/api/family/mobile/v1/lesson_schedule_items/{lesson_id}"
+
+
+     class WEB:
+         """Web API urls"""
+
+         FAMILY_PROFILE = "https://ms-edu.tatar.ru/api/family/web/v1/profile"
 
 # class MesURLs:
 #     """URLs for methods in system "МЭШ" """

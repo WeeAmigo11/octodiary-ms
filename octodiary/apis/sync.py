@@ -10,7 +10,7 @@ import random
 import re
 import string
 from datetime import date
-from typing import Optional, TypeVar, Union
+from typing import Optional, Union
 
 from requests import Response
 from requests.utils import dict_from_cookiejar
@@ -47,11 +47,8 @@ from octodiary.types.mobile import (
     Visits,
 )
 from octodiary.types.mobile.subject_marks import SubjectsMarks
-from octodiary.types.model import Type
 from octodiary.types.web import SessionUserInfo
 from octodiary.urls import BaseURL, Systems, URLTypes
-
-T = TypeVar("T", bound=Type)
 
 
 class SyncMobileAPI(SyncBaseAPI):
@@ -151,10 +148,10 @@ class SyncMobileAPI(SyncBaseAPI):
                     "login": username,
                     "password": password,
                     "proofOfWork": proof_of_work
-                }, allow_redirects=False
+                }
             )
 
-            return self._handle_login_response(resp, resp.json() if "{" in resp.text else {})
+            return self._handle_login_response(resp, resp.json())
 
     def handle_action(self, response: Response, action: Optional[str] = None, failed: Optional[str] = None) -> str | bool:
         match failed or action:
@@ -266,7 +263,6 @@ class SyncMobileAPI(SyncBaseAPI):
                     return self._handle_login_response(resp, resp.json())
 
 
-
         if json.get("inquire", None) == "enter_sms_code":
             json["api_class"] = self
             return EnterSmsCode.model_validate(json)
@@ -298,10 +294,6 @@ class SyncMobileAPI(SyncBaseAPI):
             return self.token
         elif response.status_code == 200 and (token := dict_from_cookiejar(response.cookies).get("aupd_token")):
             return token
-        elif "Location" in response.headers and (location := response.headers.get("Location")) and "?code=" in location:
-            return self._handle_login_response(response, {
-                "trust_code": location.split("?code=")[1]
-            })
 
         return None
 
@@ -436,9 +428,8 @@ class SyncMobileAPI(SyncBaseAPI):
             self,
             profile_id: int,
             name: str = "settings_group_v1",
-            subsystem_id: int = 1,
-            settings_model: type[T] = UserSettings
-    ) -> "T | UserSettings":
+            subsystem_id: int = 1
+    ) -> UserSettings:
         """
         Get user settings
 
@@ -446,10 +437,9 @@ class SyncMobileAPI(SyncBaseAPI):
             profile_id (int): The ID of the profile.
             name (str, optional): The name of the settings group. Defaults to "settings_group_v1".
             subsystem_id (int, optional): The ID of the subsystem. Defaults to 1.
-            settings_model (type[T], optional): The settings model. Defaults to UserSettings.
 
         Returns:
-            T(TypeModel) | UserSettings: The user settings object.
+            UserSettings: The user settings object.
 
         Raises:
             None.
@@ -467,12 +457,12 @@ class SyncMobileAPI(SyncBaseAPI):
                 "client-type": "diary-mobile",
                 "profile-id": profile_id
             },
-            model=settings_model,
+            model=UserSettings,
         )
 
     def edit_user_settings_app(
             self,
-            settings: Type,
+            settings: UserSettings,
             profile_id: int,
             name: str = "settings_group_v1",
             subsystem_id: int = 1,
@@ -481,14 +471,14 @@ class SyncMobileAPI(SyncBaseAPI):
         Edit user settings
 
         Args:
-            settings (Type | UserSettings): The user settings object.
+            settings (UserSettings): The user settings object.
             profile_id (int): The ID of the profile.
             name (str, optional): The name of the settings group. Defaults to "settings_group_v1".
             subsystem_id (int, optional): The ID of the subsystem. Defaults to 1.
         """
         self.request(
             method="PUT",
-            base_url=BaseURL(type=URLTypes.DNEVNIK if self.system == Systems.MYSCHOOL else URLTypes.SCHOOL, system=self.system),
+            base_url=BaseURL(type=URLTypes.DNEVNIK, system=self.system),
             path="/api/usersettings/v1",
             params={
                 "name": name,
