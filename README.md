@@ -13,18 +13,19 @@
     <a href="https://pypi.org/project/octodiary/"><image src="https://img.shields.io/pypi/v/octodiary.svg" alt="PyPI Version"></a>
 </p>
 
-
 # OctoDiary-py
 Неофициальная Python-библиотека для использования API МЭШ / Моя Школа.
+Поддержа ms-edu
+[**Официальный репозиторий**](https://github.com/OctoDiary/OctoDiary-py)
 
 ## Установка
 
-### Новейшая версия:
+### Версия "MS-EDU":
 ``` bash
-$ pip install https://github.com/OctoDiary/OctoDiary-py/archive/main.zip --upgrade --force-reinstall
+$ pip install https://github.com/WeeAmigo11/octodiary-ms/archive/main.zip --upgrade --force-reinstall
 ```
 
-### Стабильная версия:
+### Стабильная версия / Оригинальный репо:
 ``` bash
 $ pip install octodiary --upgrade
 ```
