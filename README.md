@@ -15,8 +15,10 @@
 
 # OctoDiary-py
 Неофициальная Python-библиотека для использования API МЭШ / Моя Школа.
-Поддержа ms-edu
-[**Официальный репозиторий**](https://github.com/OctoDiary/OctoDiary-py)
+
+## Особенности
+- Поддержа MS-EDU
+- [**Официальный репозиторий**](https://github.com/OctoDiary/OctoDiary-py)
 
 ## Установка
 
